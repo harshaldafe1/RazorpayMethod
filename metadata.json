@@ -1,0 +1,5 @@
+{
+  "name": "Razorpay Integration App",
+  "description": "A full-stack application demonstrating Razorpay payment gateway integration.",
+  "requestFramePermissions": []
+}
