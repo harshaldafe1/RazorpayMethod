@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { ShoppingCart, CreditCard, CheckCircle, AlertCircle } from 'lucide-react';
+import { motion } from 'motion/react';
 
 // Load Razorpay Script dynamically
 const loadRazorpayScript = () => {
@@ -121,23 +122,45 @@ export default function App() {
           </div>
 
           {status === 'success' && (
-            <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+            <motion.div 
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg flex items-start gap-3"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.1 }}
+              >
+                <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+              </motion.div>
               <div>
                 <h3 className="font-semibold">Payment Successful</h3>
                 <p className="text-sm mt-1">{message}</p>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {status === 'error' && (
-            <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+            <motion.div 
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg flex items-start gap-3"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.1 }}
+              >
+                <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+              </motion.div>
               <div>
                 <h3 className="font-semibold">Payment Failed</h3>
                 <p className="text-sm mt-1">{message}</p>
               </div>
-            </div>
+            </motion.div>
           )}
 
           <button
