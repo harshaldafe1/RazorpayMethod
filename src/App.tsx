@@ -52,7 +52,7 @@ export default function App() {
 
       // 2. Initialize Razorpay Checkout
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_dummykey', // Fallback for UI demo
+        key: orderData.key_id, // Dynamically use the key from the backend
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Acme Corp",

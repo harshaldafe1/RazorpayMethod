@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import Razorpay from "razorpay";
@@ -10,29 +11,18 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Razorpay initialization
-  let razorpay: Razorpay | null = null;
-  function getRazorpay() {
-    if (!razorpay) {
-      const key_id = process.env.RAZORPAY_KEY_ID;
-      const key_secret = process.env.RAZORPAY_KEY_SECRET;
-      if (!key_id || !key_secret) {
-        console.warn("Razorpay keys are missing. Payments will fail.");
-        return null;
-      }
-      razorpay = new Razorpay({ key_id, key_secret });
-    }
-    return razorpay;
-  }
-
   app.post("/api/create-order", async (req, res) => {
     try {
-      const rzp = getRazorpay();
-      if (!rzp) {
-        return res.status(500).json({ error: "Razorpay not configured in environment variables" });
+      const key_id = process.env.RAZORPAY_KEY_ID;
+      const key_secret = process.env.RAZORPAY_KEY_SECRET;
+      
+      if (!key_id || !key_secret) {
+        return res.status(500).json({ error: "Razorpay API keys are missing in environment variables." });
       }
 
+      const rzp = new Razorpay({ key_id, key_secret });
       const { amount, currency = "INR" } = req.body;
+      
       const options = {
         amount: amount * 100, // amount in smallest currency unit (paise)
         currency,
@@ -40,10 +30,12 @@ async function startServer() {
       };
 
       const order = await rzp.orders.create(options);
-      res.json(order);
-    } catch (error) {
+      
+      // Send key_id to frontend so it doesn't need VITE_RAZORPAY_KEY_ID
+      res.json({ ...order, key_id });
+    } catch (error: any) {
       console.error("Order creation error:", error);
-      res.status(500).json({ error: "Failed to create order" });
+      res.status(500).json({ error: error.message || "Failed to create order" });
     }
   });
 
@@ -52,7 +44,7 @@ async function startServer() {
     const key_secret = process.env.RAZORPAY_KEY_SECRET;
 
     if (!key_secret) {
-      return res.status(500).json({ error: "Server misconfigured" });
+      return res.status(500).json({ error: "Server misconfigured: Missing Razorpay Secret" });
     }
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
